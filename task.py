@@ -154,6 +154,21 @@ def bonus():
 
     return render_template('bonus.html',bonus_amount=bonus_amount)
 
+
+@app.route('/lastdigit',methods=['POST','GET'])
+def lastdigit():
+    lastnum=''
+    if request.method=="POST":
+        lastdigit=int(request.form["lastdigit"])
+        if lastdigit % 3 == 0:
+            lastnum="The last digit of the number is divisible by 3."
+        else:
+            lastnum="The last digit of the number is not divisible by 3."
+    return render_template('lastdigit.html',lastnum=lastnum)
+
+    
+
+
 app.run()
 
 
