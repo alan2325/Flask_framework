@@ -1,4 +1,13 @@
 from flask import Flask,render_template,request
+import sqlite3
+
+
+# try:
+#     con.execute("create table forms(name text,age int,rollno int,mark int)")
+# except:
+#     pass
+
+
 
 app=Flask(__name__)
 
@@ -167,8 +176,41 @@ def lastdigit():
     return render_template('lastdigit.html',lastnum=lastnum)
 
     
+@app.route('/form',methods=['POST','GET'])
+def form1():
 
+    if request.method=="POST":
+        
+        name=request.form["name"]
+        age=int(request.form["age"])
+        roll=int(request.form["roll"])
+        mark=int(request.form["mark"])
+        con = sqlite3.connect("form.db")
+        con.execute("insert into forms (name,age,rollno,mark) values(?,?,?,?)",(name,int(age),int(roll),int(mark)))
+        con.commit()
+    return render_template('form.html')
+@app.route('/display')
+def display():
+    con = sqlite3.connect("form.db")
+    data=con.execute("select * from forms")
 
-app.run()
+    return render_template("formdisplay.html",data=data)
+@app.route('/edit/<name>')
+def edit(name):
+    con = sqlite3.connect("form.db")
+    data=con.exeute("select * from forms where name=?",(name))
+    if request.method=="POST":
+            name=request.form["name"]
+            age=int(request.form["age"])
+            roll=int(request.form["roll"])
+            mark=int(request.form["mark"])
+            con = sqlite3.connect("form.db")
+            con.execute("update forms set name=?,age=?,rollno=?,mark=? where name=?,age=?,rollno=?,mark=?",(name,int(age),int(roll),int(mark)))
+            con.commit()
+    return render_template("formedit.html",data=data)
+@app.route('/delete')
+def delete():
+    return render_template('display.html')
+app.run(port=5432)
 
 
